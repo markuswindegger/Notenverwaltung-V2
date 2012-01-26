@@ -1,0 +1,34 @@
+			/* SNAKE */
+			#snake table { 
+				border-collapse:collapse;
+				margin: 2% auto;
+			}
+
+			#snake tbody td { 
+				border:1px solid black; 
+				width: 15px;
+				height: 15px;
+			}
+
+			#snake thead th { 
+				border:1px solid black; 
+				text-align:center;
+			}
+
+			#snake td.right {
+				text-align:right;
+			}
+
+			#snake td.left {
+				text-align:left;
+			}
+
+
+			#snake tfoot td { 
+				font-size:x-small;
+			}
+
+			#snake tfoot td span{ 
+				color: darkblue;
+				font-weight: bold;
+			}			
