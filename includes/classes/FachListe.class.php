@@ -158,7 +158,7 @@ class FachListe extends DBObjectList
     /********************************************************************
      * selectquery to get the data from tha database
      *******************************************************************/
-    $selectquery="Select * from Fach where K_Id = :klasse AND ZR_Id = :zeitraum AND valid = 1 ORDER BY F_Id";
+    $selectquery="Select f.* from Fach f, Reihenfolge r where f.K_Id = :klasse AND f.ZR_Id = :zeitraum AND f.valid = 1 AND f.namen = r.name AND f.K_Id = r.K_Id ORDER BY r.ordnungsnummer, f.FT_Id";
     if(!($stm = $con->prepare($selectquery)))
       {
 	return MyError::raiseError(gettext('prepare_error'), SQL_ERROR, $stm->getErrorMsg());
@@ -398,6 +398,8 @@ class FachListe extends DBObjectList
     return $liste;
   }
   
+
+
 
 }
 

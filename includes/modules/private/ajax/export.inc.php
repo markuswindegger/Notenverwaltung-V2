@@ -66,7 +66,8 @@ foreach($fachliste as $fach)
   {
     if(MyError::isError($notenlistefach = NotenListe::getByFachnummerSort($fach->getIdentNumber())))
       {
-	$erg['html'] = 'Fehler in der Datenbankabfrage Notenliste: '.$notenliste->getMessage()."<br />".$notenliste->getAdditionalInfo();
+	$erg['html'] = 'Fehler in der Datenbankabfrage Notenliste: '.$notenlistefach->getMessage()."<br />".$notenlistefach->getAdditionalInfo();
+	echo json_encode($erg);
 	exit;
       }
     $notenliste[$fach->getIdentNumber()] = $notenlistefach;
@@ -76,6 +77,7 @@ foreach($fachliste as $fach)
 	if(MyError::isError($absenzenfach = AbsenzenListe::getByFachnummerSort($fach->getIdentNumber())))
 	  {
 	    $erg['html'] = 'Fehler in der Datenbankabfrage AbsenzenListe: '.$absenzenfach->getMessage()."<br />".$absenzenfach->getAdditionalInfo();
+	    echo json_encode($erg);
 	    exit;
 	  }
 	$absenzenliste[$fach->getIdentNumber()] = $absenzenfach;

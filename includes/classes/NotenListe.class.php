@@ -161,7 +161,7 @@ class NotenListe extends DBObjectList
 
     if(!($stm->execute()))
       {
-	return MyError::raiseError(gettext('prepare_error'), SQL_ERROR, $con->getErrorMsg());
+	return MyError::raiseError(gettext('execute_error'), SQL_ERROR, $stm->getErrorMsg());
       }
     $liste=NULL;
     $ident = "S_Id";
