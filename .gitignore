@@ -1,5 +1,7 @@
-data/
-etc/
-logs/
+data/*
+etc/conf.xml
+logs/*
 *~
 smarty/templates_c/*
+
+/doc/*.mwb.bak
