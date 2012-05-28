@@ -363,7 +363,7 @@ class FachListe extends DBObjectList
      * selectquery to get the data from tha database
      *******************************************************************/
     
-    $selectquery = "select * from Fach where absenzen = 1 AND valid = 1 AND ZR_Id = :zeitraum AND K_Id = :klasse GROUP BY namen ORDER BY F_Id";
+    $selectquery = "Select f.* from Fach f, Reihenfolge r where f.K_Id = :klasse AND f.ZR_Id = :zeitraum AND f.valid = 1 AND f.namen = r.name AND f.K_Id = r.K_Id AND absenzen = 1 group by namen ORDER BY r.ordnungsnummer, f.FT_Id";
     
     if(!($stm = $con->prepare($selectquery)))
       {
