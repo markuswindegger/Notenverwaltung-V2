@@ -363,7 +363,13 @@ class FachListe extends DBObjectList
      * selectquery to get the data from tha database
      *******************************************************************/
     
+    /**
+     * Old query from the NVS 2.2, new query since 2.3
+     */
+    /*
     $selectquery = "Select f.* from Fach f, Reihenfolge r where f.K_Id = :klasse AND f.ZR_Id = :zeitraum AND f.valid = 1 AND f.namen = r.name AND f.K_Id = r.K_Id AND absenzen = 1 group by namen ORDER BY r.ordnungsnummer, f.FT_Id";
+    */
+    $selectquery = "select * from Fach where K_Id = :klasse AND ZR_Id = :zeitraum AND valid = 1 AND absenzen = 1 ORDER BY F_Id";
     
     if(!($stm = $con->prepare($selectquery)))
       {

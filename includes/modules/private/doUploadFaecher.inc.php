@@ -63,14 +63,23 @@ if (isset($_FILES["datei"]))
 	      }
 
 	    $zeile="";
-	    $zeilennummer=0;
-	    while($zeile=fgets($datei))
+	    $zeilennummer=2;
+	    if(!$zeile = fgets($datei))
 	      {
-		++$zeilennummer;
+		@$con->rollback();		
+		$smarty->assign('fehlermsg', 'Fehler in der Datei, keine g&uuml;ltigen Zeilen vorhanden!<br />Zeilennummer: '.$zeilennummer);
+		$smarty->addTemplate('content', 'private/uploadFaecher.tpl');
+		return;
+	      }
+	    while($zeile = fgets($datei))
+	      {
 		$daten=explode($_POST['trennzeichen'], $zeile);
-		if(sizeof($daten) == 7)
+		if(sizeof($daten) < 5)
 		  {
-		    $daten[6] = substr($daten[6], 0, strlen($daten[6])-1);
+		    @$con->rollback();		
+		    $smarty->assign('fehlermsg', 'Fehler in der Datei, keine g&uuml;ltigen Zeilen vorhanden!<br />Zeilennummer: '.$zeilennummer);
+		    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
+		    return;
 		  }
 		$stufe = substr($daten[4], 0, 1);
 		$zug = substr($daten[4], -1, 1);
@@ -96,128 +105,48 @@ if (isset($_FILES["datei"]))
 			return;
 		      }
 		  }
-		
-		$vorname_lehrer = trim($daten[3]);
-		$nachname_lehrer = trim($daten[2]);
-		if(MyError::isError($lehrer = BenutzerListe::getByName($vorname_lehrer, $nachname_lehrer)))
+		$fachzeile = 10;
+		$reihenfolge = 0;
+		while (isset($daten[$fachzeile]) && $daten[$fachzeile] != "" && isset($daten[$fachzeile + 2]) && $daten[$fachzeile + 2] != "")
 		  {
-		    @$con->rollback();
-		    $smarty->assign('fehlermsg', 'Fehler beim Holen des Lehrers'."<br />Zeilennummer: ".$zeilennummer);
-		    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-		    return;
-		  }
-		if($lehrer == NULL)
-		  {
-		    @$con->rollback();
-		    $smarty->assign('fehlermsg', 'Benutzer nicht in Datenbank<br />Nachname: '.$nachname_lehrer."<br />Name: ".$vorname_lehrer."<br />Zeilennummer: ".$zeilennummer);
-		    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-		    return;
-		  }
-		
-		$fach = new Fach();
-		$fach->setLehrernummer($lehrer->getIdentNumber());
-		$fach->setKlassennummer($klasse->getIdentNumber());
-		$fach->setZeitraumnummer($semester->getIdentNumber());
-		$fach->setName($daten[0]);
-		if($daten[5] == 1)
-		  {
+		    $vorname_lehrer = trim($daten[$fachzeile + 2]);
+		    $nachname_lehrer = trim($daten[$fachzeile + 1]);
+		    if(MyError::isError($lehrer = BenutzerListe::getByName($vorname_lehrer, $nachname_lehrer)))
+		      {
+			@$con->rollback();
+			$smarty->assign('fehlermsg', 'Fehler beim Holen des Lehrers'."<br />Zeilennummer: ".$zeilennummer);
+			$smarty->addTemplate('content', 'private/uploadFaecher.tpl');
+			return;
+		      }
+		    if($lehrer == NULL)
+		      {
+			@$con->rollback();
+			$smarty->assign('fehlermsg', 'Benutzer nicht in Datenbank<br />Nachname: '.$nachname_lehrer."<br />Name: ".$vorname_lehrer."<br />Zeilennummer: ".$zeilennummer);
+			$smarty->addTemplate('content', 'private/uploadFaecher.tpl');
+			return;
+		      }
+		    
+		    $fach = new Fach();
+		    $fach->setLehrernummer($lehrer->getIdentNumber());
+		    $fach->setKlassennummer($klasse->getIdentNumber());
+		    $fach->setZeitraumnummer($semester->getIdentNumber());
+		    $fach->setName($daten[$fachzeile]);
 		    $fach->setAbsenzen(1);
-		  }
-		else
-		  {
-		    $fach->setAbsenzen(0);
-		  }
-		
-		
-		//Bestimmen ob fach schriftlich, muendlich oder praktisch oder alles
-		$schriftlich = stripos($daten[1], "s");
-		if($schriftlich === false)
-		  $schriftlich = stripos($daten[1], "g");
-		$muendlich = stripos($daten[1], "m");
-		$praktisch = stripos($daten[1], "p");
-		if(trim($daten[1]) == "")
-		  $schriftlich = 13;
-		if($schriftlich !== false)
-		  {
 		    $fach->setFachtypnummer(1);
+		    
 		    if(MyError::isError($error = $fach->insert()))
-		      {
-			@$con->rollback();
-			$smarty->assign('fehlermsg', $error->getMessage()."<br/>".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			
-			$smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			return;
-		      }
-		  }
-		if($muendlich !== false)
-		  {
-		    $fach->setFachtypnummer(2);
-		    if(MyError::isError($error = $fach->insert()))
-		      {
-			@$con->rollback();
-			if($error->getMessage() == "prepare_error" && strstr($error->getAdditionalInfo(), "23000: Duplicate"))
-			  {
-			    $smarty->assign('fehlermsg', "Benutzername schon vorhanden!<br />".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			else
-			  {
-			    $smarty->assign('fehlermsg', $error->getMessage()."<br/>".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			return;
-		      }
-		  }
-		if($praktisch !== false)
-		  {
-		    $fach->setFachtypnummer(3);
-		    if(MyError::isError($error = $fach->insert()))
-		      {
-			@$con->rollback();
-			if($error->getMessage() == "prepare_error" && strstr($error->getAdditionalInfo(), "23000: Duplicate"))
-			  {
-			    $smarty->assign('fehlermsg', "Benutzername schon vorhanden!<br />".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			else
-			  {
-			    $smarty->assign('fehlermsg', $error->getMessage()."<br/>".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			return;
-		      }
-		  }
-		if($daten[6] == 1)
-		  {
-		    $lehrer->setRolle(3);
-		    if(MyError::isError($error = $lehrer->update()))
-		      {
-			@$con->rollback();
-			if($error->getMessage() == "prepare_error" && strstr($error->getAdditionalInfo(), "23000: Duplicate"))
-			  {
-			    $smarty->assign('fehlermsg', "Benutzername schon vorhanden!<br />".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			else
-			  {
-			    $smarty->assign('fehlermsg', $error->getMessage()."<br/>".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
-			    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
-			  }
-			return;
-		      }
-		    $vorstand = new Vorstand();
-		    $vorstand->setLehrernummer($lehrer->getIdentNumber());
-		    $vorstand->setKlassennummer($klasse->getIdentNumber());
-		    $vorstand->setZeitraumnummer($semester->getIdentNumber());
-		    if(MyError::isError($error = $vorstand->insert()))
 		      {
 			@$con->rollback();
 			$smarty->assign('fehlermsg', $error->getMessage()."<br/>".$error->getAdditionalInfo()."<br />Zeilennummer: ".$zeilennummer);
 			$smarty->addTemplate('content', 'private/uploadFaecher.tpl');
 			return;
-		      }
+		      }		    
+		    $fachzeile += 3;
+
+		    echo "<p>Inserted Fach: ".$fach->getName()." into Database ".$fach->getIdentNumber()."</p>";
 		  }
 	      }
+	    
 	  }
 	else 
 	  {
@@ -252,7 +181,13 @@ if(!$con->commit())
     $smarty->addTemplate("content", "private/uploadFaecher.tpl");
     return;
   }
-
+if(!$con->commit())
+  {
+    @$con->rollback();
+    $smarty->assign("fehlermsg", "Fehler beim Best&auml;titgen der Datentransaktion!");
+    $smarty->addTemplate("content", "private/uploadFaecher.tpl");
+    return;
+  }
 $smarty->assign('message', "Dei Faecher wurden erfolgreich importiert!");
 
 $smarty->addTemplate('content', 'private/uploadFaecher.tpl');

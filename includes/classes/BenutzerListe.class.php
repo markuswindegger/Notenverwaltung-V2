@@ -162,7 +162,7 @@ class BenutzerListe extends DBObjectList
       {
 	return MyError::raiseError(gettext('prepare_error'), SQL_ERROR, $con->getErrorMsg());
       }
-
+    echo "Name: ".$name."<br /> Nachname".$nachname;
     $stm->bindParam(':name', $name);
     $stm->bindParam(':nachname', $nachname);
 

@@ -184,6 +184,7 @@ class NotenListe extends DBObjectList
   }
 
 
+
   public static function getBySchuelernummer($schueler)
   {
     $con = AppDBO::getInstance();

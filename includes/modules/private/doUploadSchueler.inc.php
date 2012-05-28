@@ -61,16 +61,25 @@ if (isset($_FILES["datei"]))
 		return;
 	      }
 	    $zeile="";
+	    $zeile = fgets($datei);
 	    while($zeile=fgets($datei))
 	      {
 		$daten=explode($_POST['trennzeichen'], $zeile);
-		if(sizeof($daten) > 4)
+		if(sizeof($daten) > 5)
 		  {
-		    if(sizeof($daten) == 5)
-		      {
-			$daten[4] = substr($daten[4], 0, strlen($daten[4])-1);
-		      }
-		    if(MyError::isError($klasse = KlassenListe::getByName($daten[2], $daten[3], $daten[4])))
+		    
+		    
+		    $daten[4] = substr($daten[4], -1);
+		    
+		    /*
+		    echo "<pre>";
+		    echo "Zug: ".$daten[4];
+		    echo "Fachrichtung: ".$daten[0];
+		    echo "Stufe: ".$daten[2];
+		    echo "</pre>";
+		    */
+		    //getByName(Stufe, Fachrichtung, Zug)
+		    if(MyError::isError($klasse = KlassenListe::getByName($daten[2], $daten[0], $daten[4])))
 		      {
 			@$con->rollback();
 			$smarty->assign('fehlermsg', 'Fehler beim Holen der Klasse');
@@ -81,7 +90,7 @@ if (isset($_FILES["datei"]))
 		      {
 			$klasse = new Klasse();
 			$klasse->setStufe($daten[2]);
-			$klasse->setFachrichtung($daten[3]);
+			$klasse->setFachrichtung($daten[0]);
 			$klasse->setZug($daten[4]);
 			if(MyError::isError($error = $klasse->insert()))
 			  {
@@ -94,8 +103,8 @@ if (isset($_FILES["datei"]))
 
 		    $schueler = new Schueler();
 
-		    $schueler->setName($daten[1]);
-		    $schueler->setNachname($daten[0]);
+		    $schueler->setName($daten[6]);
+		    $schueler->setNachname($daten[5]);
 		    $schueler->setKlassennummer($klasse->getIdentNumber());
 		    $schueler->setZeitraumnummer($semester->getIdentNumber());
 

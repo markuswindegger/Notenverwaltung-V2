@@ -4,4 +4,4 @@ logs/*
 *~
 smarty/templates_c/*
 
-/doc/*.mwb.bak
+*.mwb.bak
