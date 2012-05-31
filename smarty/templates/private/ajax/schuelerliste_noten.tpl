@@ -45,7 +45,7 @@
   <input type="hidden" name="fach[]" value="{$fach->getIdentNumber()}" />
   {/foreach}
   <input type="hidden" name="klasse" value="{$klasse->getIdentNumber()}" />
-  <input type="submit" name="Noten eintragen" value="Noten eintragen" align="center"/>
+  <input type="submit" name="Eingegebene Noten speichern" value="Eingegebene Noten speichern" align="center"/>
 </form>
 <p style="margin-top: 3em">
 * Geben Sie bitte hier nur <u>GANZE</u> Noten von <b>1 bis 10</b> ein. F&uuml;r nicht klassifiziert bitte ein <b>n.k.</b> eintragen. Auch ein <b>?</b> ist m&ouml;glich, falls Sie sich der Note noch nicht sicher sind.

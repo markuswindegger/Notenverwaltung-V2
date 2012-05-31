@@ -130,7 +130,7 @@ Released   : 20100308
 	    <h2>Noten verwalten</h2>
 	    <ul>
 	      <li>
-		<a href="./index.php?page=private.insertNoten">Noten eintragen</a>
+		<a href="./index.php?page=private.insertNoten">Zu den Notenbl&auml;ttern</a>
 	      </li>
 	      <li>
 		<a href="./index.php?page=private.preparePrint">Noten&uuml;bersicht ausdrucken</a>

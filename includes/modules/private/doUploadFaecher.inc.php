@@ -81,9 +81,9 @@ if (isset($_FILES["datei"]))
 		    $smarty->addTemplate('content', 'private/uploadFaecher.tpl');
 		    return;
 		  }
-		$stufe = substr($daten[4], 0, 1);
-		$zug = substr($daten[4], -1, 1);
-		$fachrichtung = substr($daten[4], strpos($daten[4], " "), strlen($daten[4]) - (strpos($daten[4], " ") + 2));
+		$stufe = $daten[2];
+		$zug = substr($daten[4], -1);
+		$fachrichtung = $daten[0];
 		if(MyError::isError($klasse = KlassenListe::getByName($stufe, $fachrichtung, $zug)))
 		  {
 		    @$con->rollback();		
@@ -174,13 +174,6 @@ else
 	
 fclose($datei);
 
-if(!$con->commit())
-  {
-    @$con->rollback();
-    $smarty->assign("fehlermsg", "Fehler beim Best&auml;titgen der Datentransaktion!");
-    $smarty->addTemplate("content", "private/uploadFaecher.tpl");
-    return;
-  }
 if(!$con->commit())
   {
     @$con->rollback();
