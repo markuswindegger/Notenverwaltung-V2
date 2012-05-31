@@ -95,9 +95,11 @@ Released   : 20100308
 	      <li>
 		<a href="./index.php?page=private.uploadSchueler">Sch&uuml;ler importieren</a>
 	      </li>
+	      <!--
 	      <li>
 		<a href="./index.php?page=private.uploadSchuelerPoppcorn">Sch&uuml;ler aus Poppcorndatei importieren</a>
 	      </li>
+	      -->
 	      <li>
 		<a href="./index.php?page=private.prepareExport">Export Klassen</a>
 	      </li>
