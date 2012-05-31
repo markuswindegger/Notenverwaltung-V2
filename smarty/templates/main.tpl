@@ -144,10 +144,10 @@ Released   : 20100308
 	    <h2>Klassenvorstand</h2>
 	    <ul>
 	      <li>
-		<a href="./index.php?page=private.insertBetragen">Betragen eintragen</a>
+		<a href="./index.php?page=private.insertBetragen">Zu den Verhalten/Absenzen</a>
 	      </li>
 	      <li>
-		<a href="./index.php?page=private.printBetragen">Betragen drucken</a>
+		<a href="./index.php?page=private.printBetragen">Betragen ausdrucken</a>
 	      </li>
 	    </ul>
 	  </li>

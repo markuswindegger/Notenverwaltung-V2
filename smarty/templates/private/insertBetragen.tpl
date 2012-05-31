@@ -1,5 +1,5 @@
 <div class="post">
-  <h2 class="title"><a href="#">Betragen eingeben</a></h2>
+  <h2 class="title"><a href="#">Betragen/Verhalten</a></h2>
   <div class="entry">
     {if isset($fehlermsg) && $fehlermsg != NULL}
     <p style="color: red" align="center">
